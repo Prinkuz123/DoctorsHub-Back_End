@@ -40,7 +40,7 @@ const getAllPatients=async (req,res)=>{
 //------get patientBYId------
 const getPatientbyId=async(req,res)=>{
     const id=req.params.id
-    const patientbyId=await patientSchema.findById(id)
+    const patientbyId=await patientSchema.findById(id)   
     res.json(patientbyId)
 }
 

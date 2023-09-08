@@ -1,81 +1,77 @@
+const bcrypt = require("bcrypt");
 const patientSchema = require("../Model/patientSchema");
+const jwt = require("jsonwebtoken");
 
 //----Patient register-----
 
 const patientRegister = async (req, res) => {
-    try{
   const { username, password, email, address, age, phone } = req.body;
- 
+
   if (!username || !password || !email) {
     return res
       .status(400)
       .json({ message: "Username, password, and email are required." });
   }
-  const  identifyPatient=await patientSchema.findOne({email:email})
-  console.log(identifyPatient);
-  if (identifyPatient){
+  const identifyPatient = await patientSchema.findOne({ email: email });
+  // console.log(identifyPatient);
+  if (identifyPatient) {
     return res.json({
-      status:"failure",
-      message:"user already exist"
-    })
-
-
+      status: "failure",
+      message: "user already exist",
+    });
   }
 
-
+  const hashedPassword = await bcrypt.hash(password, 10);
   const newPatient = new patientSchema({
     username: username,
-    password: password,
+    password: hashedPassword,
     email: email,
     address: address,
     age: age,
     phone: phone,
   });
+
   await newPatient.save();
   // console.log(newPatient)
   res.json({
     status: "success",
     message: "Patient registered successfully now you can login",
-  });} 
-  catch (error) {
-    console.error("Error during patient registration:", error);
-    res.status(500).json({ message: "An error occurred during registration." });
-}
-}
+  });
+};
 
 // ......patientlogin......
-const patientlogin=async (req,res)=>{
-  try{
-    const{email,password}=req.body
-    console.log(email,password)
-    const Patient=await patientSchema.findOne({email:email})
 
+const patientlogin = async (req, res) => {
+  const { email, password } = req.body;
+  // console.log(email, password);
+  const Patient = await patientSchema.findOne({ email: email });
 
-    if(!Patient || Patient.password !== password){
-      
-      console.log("login if condition")
-     
+  if (!Patient || Patient.password !== password) {
+    return res.json({
+      status: "failure",
+      message: "incorrect email or password",
+    });
+  }
+
+  let Password = await bcrypt.hash(password, 10);
+
+  bcrypt.compare(Password, Patient.password, (error) => {
+    if (error) {
       return res.json({
         status: "failure",
-        message: "incorrect email or password"
+        message: "incorrect password",
       });
     }
-    else{
-     
-      return res.status(200).json({
-        status:"success",
-        message:"logged in  successfully"
-     
-      })
-    }
-   
-  }
-  catch (error) {
-    console.error("error occured during login", error);
-    res.status(500).json({ message: "error occured during login" });
-}
-}
+  });
+  const token = jwt.sign({ email: email }, "patient", {
+    expiresIn: "24h",
+  });
 
+  return res.status(200).json({
+    status: "success",
+    message: "logged in  successfully",
+    data: token,
+  });
+};
 
-
-module.exports = {patientRegister,patientlogin };
+module.exports = { patientRegister, patientlogin };

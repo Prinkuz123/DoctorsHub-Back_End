@@ -1,30 +1,26 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-require('dotenv').config()
+require("dotenv").config();
+
+
 const port = 5000;
-
-
 const app = express();
-
+const url=process.env.mongoDB_url
 app.use(cors());
 app.use(express.json());
 
-
 //-----adminRoutes----
-const adminRoutes=require('./Routes/adminRoutes')
-app.use('/',adminRoutes)
-
+const adminRoutes = require("./Routes/adminRoutes");
+app.use("/", adminRoutes);
 
 //..........patientRoutes........
-const patientRoutes = require("./Routes/patients")
-app.use('/',patientRoutes)
-
-
-
+const patientRoutes = require("./Routes/patients");
+app.use("/", patientRoutes);
 
 mongoose
-  .connect("mongodb://127.0.0.1/DoctorsVilla")
+
+  .connect(url)
   .then((result) => console.log("db connected"))
   .catch((err) => console.log("error", err));
 app.listen(port, () => {

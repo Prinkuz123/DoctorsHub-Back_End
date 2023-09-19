@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const patientSchema = require("../Model/patientSchema");
 const jwt = require("jsonwebtoken");
+const medicine = require("../Model/medicineSchema");
 
 //----Patient register-----
 
@@ -13,7 +14,6 @@ const patientRegister = async (req, res) => {
       .json({ message: "Username, password, and email are required." });
   }
   const identifyPatient = await patientSchema.findOne({ email: email });
-  // console.log(identifyPatient);
   if (identifyPatient) {
     return res.json({
       status: "failure",
@@ -43,7 +43,8 @@ const patientRegister = async (req, res) => {
 
 const patientlogin = async (req, res) => {
   const { email, password } = req.body;
-  // console.log(email, password);
+
+  console.log(email, password);
   const Patient = await patientSchema.findOne({ email: email });
 
   if (!Patient || Patient.password !== password) {
@@ -73,5 +74,35 @@ const patientlogin = async (req, res) => {
     data: token,
   });
 };
+
+
+//-----Add medicines to cart by patient------
+
+// const addMedicineToCart=async(req,res)=>{
+//   let medicineId=req.params.id
+//   const medicine=await medicine.findById(medicineId)
+//   if(!medicine){
+//     return res.status(400).json({
+//       status:"failure",
+//       message:"some errror occured"
+//     })
+// }
+// const user=req.body.username
+// const Patient=await patient.findOne({username:user})
+// if(Patient.cart.includes(medicineId)){
+//   return res.status(400).json({
+//     status:"failure",
+//     message:"product already exist in the cart"
+//   })
+// }
+// Patient.cart.push(medicineId)
+// await Patient.save()
+// return res.status(200).json({
+//   status:"success",
+//   message:"product successfully added to cart "
+// })
+
+// }
+
 
 module.exports = { patientRegister, patientlogin };

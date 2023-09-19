@@ -6,6 +6,7 @@ const tryCatch=require("../Middleware/tryCatch handler")
 
 router.post("/patient/register",tryCatch(patient.patientRegister))
 router.post("/patient/login",tryCatch(patient.patientlogin))
+router.post("/patient/cart/:id",tryCatch(patient.patientlogin))
 
 module.exports=router
 

@@ -6,7 +6,7 @@ const adminlogin = (req, res) => {
   const username = process.env.adminusername;
   const password = process.env.adminpassword;
 
-  const userName = req.body.username; //TODO
+  const userName = req.body.username; 
   const passWord = req.body.password;
 
   // const{username}=req.body
@@ -40,7 +40,37 @@ const getAllPatients = async (req, res) => {
 const getPatientbyId = async (req, res) => {
   const id = req.params.id;
   const patientbyId = await patientSchema.findById(id);
-  res.json(patientbyId);
+  res.json({
+    status:"success",
+    message:"patientdetailsById",
+  data:patientbyId});
 };
 
-module.exports = { adminlogin, getAllPatients, getPatientbyId };
+//----updatePatientData----
+const updatePatientData=async(req,res)=>{
+  const id =req.params.id;
+  const doc=req.body
+  const updatedPatient= await patientSchema.findByIdAndUpdate(id,doc,{new:"true,"})
+  res.json({
+    status:"success",
+    message:"patientdataUpdated",
+    data:updatedPatient
+  })
+
+}
+
+//------delete Patient------
+const deletePatient=async (req,res)=>{
+  const id=req.params.id
+  const dltPatient=await patientSchema.findByIdAndDelete(id)
+  res.json({
+    status:"success",
+    message:"patient deleted successfully",
+    data:dltPatient
+  })
+  console.log(dltPatient)
+}
+
+
+
+module.exports = { adminlogin, getAllPatients, getPatientbyId,updatePatientData ,deletePatient};

@@ -10,6 +10,8 @@ const router=express.Router()
 router.post('/admin/login',tryCatch(admin.adminlogin))
 router.get('/admin/patients',tryCatch(admin.getAllPatients))
 router.get('/admin/patients/:id',tryCatch(admin.getPatientbyId))
+router.put('/admin/patients/:id/update',tryCatch(admin.updatePatientData))
+router.delete('/admin/patients/:id/delete',tryCatch(admin.deletePatient))
 
 router.post('/admin/medicine',tryCatch(medicine.addMedicine))
 router.get('/admin/medicine',tryCatch(medicine.getAllMedicines))
